@@ -158,22 +158,13 @@ $user = Session::getUser();
             <?php include __DIR__ . '/partials/sidebar-footer.php'; ?>
         </aside>
 
-        <main class="col-lg-10 col-md-9 p-4">
-            <div class="d-flex align-items-center gap-2 mb-3">
-                <div class="ms-auto d-flex align-items-center gap-2">
-<button class="theme-toggle-btn btn btn-ghost d-flex align-items-center justify-content-center me-2" type="button" 
-                    aria-label="Toggle theme" 
-                    style="width:40px;height:40px;border-radius:10px;padding:0;border:none;">
-                <span class="theme-icon" style="font-size:1.2rem;">☀️</span>
-            </button>
-                    <a href="../frontend/logout.php" class="btn btn-outline-danger btn-sm">
-                        <i class="bi-box-arrow-right me-1"></i>Logout
-                    </a>
-                </div>
-            </div>
+        <?php 
+        $pageTitle = 'Task Management'; 
+        include __DIR__ . '/partials/header.php'; 
+        ?>
             <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
                 <div>
-                    <h4 class="mb-1">Task Management</h4>
+
                     <small class="text-muted">Create and manage employee tasks</small>
                 </div>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTaskModal">+ Create Task</button>
@@ -278,6 +269,7 @@ $user = Session::getUser();
             </div>
 
         </main>
+    </div>
     </div>
 </div>
 

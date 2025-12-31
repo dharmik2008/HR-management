@@ -74,11 +74,11 @@ $initials = getInitials($user['Hr_firstName'] ?? 'HR', $user['Hr_lastName'] ?? '
         </aside>
 
         <?php 
-        $pageTitle = ''; 
+        $pageTitle = 'Dashboard'; 
         include __DIR__ . '/partials/header.php'; 
         ?>
             <div class="mb-4">
-                <h4 class="mb-1">Dashboard</h4>
+                
                 <small class="text-muted">Welcome back! Here's your HR overview</small>
             </div>
 
@@ -187,6 +187,7 @@ $initials = getInitials($user['Hr_firstName'] ?? 'HR', $user['Hr_lastName'] ?? '
             </div>
 
         </main>
+    </div>
     </div>
 </div>
 
