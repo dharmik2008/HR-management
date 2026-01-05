@@ -266,7 +266,7 @@ $user = Session::getUser();
         include __DIR__ . '/partials/header.php'; 
         ?>
             <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
-                <div>
+                <div>   
 
                     <small class="text-muted">Manage profiles, roles, salary and documents</small>
                 </div>

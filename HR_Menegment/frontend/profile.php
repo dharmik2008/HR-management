@@ -108,17 +108,6 @@ $categories = $categoryModel->getAllCategories();
                 <img src="../assets/HELIX.png" alt="HELIX Logo" style="height:60px; width:auto; max-width:100%; border-radius:8px; object-fit:contain; margin-right:10px;">
                 <div class="fw-bold" style="color:#4f46e5;">HELIX</div>
             </a>
-            <div class="sidebar-header d-flex align-items-center">
-                <?php if (!empty($profilePicUrl)): ?>
-                    <img src="<?php echo htmlspecialchars($profilePicUrl); ?>" alt="Profile" class="me-3" style="width:52px;height:52px;border-radius:50%;object-fit:cover;">
-                <?php else: ?>
-                    <div class="avatar me-3"><?php echo $initials; ?></div>
-                <?php endif; ?>
-                <div>
-                    <div class="fw-semibold"><?php echo htmlspecialchars($user['Emp_firstName'] . ' ' . $user['Emp_lastName']); ?></div>
-                    <small><?php echo htmlspecialchars($empData['Category_name'] ?? 'Employee'); ?></small>
-                </div>
-            </div>
             <nav class="sidebar-nav mt-2">
                 <a class="nav-pill" href="employee-dashboard.php"><i class="bi-speedometer2"></i>Dashboard</a>
                 <a class="nav-pill" href="attendance.php"><i class="bi-calendar-check"></i>Attendance</a>
@@ -132,7 +121,12 @@ $categories = $categoryModel->getAllCategories();
         </aside>
 
         <main class="col-md-9 col-lg-10 p-4">
-            <?php include __DIR__ . '/partials/user-top-bar.php'; ?>
+            <?php 
+            $pageTitle = 'Profile';
+            $pageSubtitle = 'Manage your account settings';
+            $headerProfilePic = $profilePicUrl;
+            include __DIR__ . '/partials/header-component.php'; 
+            ?>
             <!-- Messages -->
             <?php if ($message): ?>
             <div class="alert alert-<?php echo $messageType; ?> alert-dismissible fade show" role="alert">
@@ -290,7 +284,6 @@ $categories = $categoryModel->getAllCategories();
                     </div>
                 </div>
             </div>
-            <?php include __DIR__ . '/partials/theme-toggle.php'; ?>
         </main>
     </div>
 </div>

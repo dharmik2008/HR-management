@@ -17,7 +17,7 @@ if (isset($_POST['send_code'])) {
     $email = $_POST['email']; 
 
     // Logic remains exactly the same
-    $stmt = $conn->prepare("SELECT Emp_id FROM employees WHERE Emp_email = ?");
+    $stmt = $conn->prepare("SELECT Emp_id, Emp_firstName FROM employees WHERE Emp_email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -44,9 +44,52 @@ if (isset($_POST['send_code'])) {
             $mail->setFrom('helix7606@gmail.com', 'HR System'); 
             $mail->addAddress($email);     
 
+            // Use CID embedding for reliability (Base64 can be too large for some email clients)
+            $logoPath = __DIR__ . '/../asset s/HELIX.png';
+            if (file_exists($logoPath)) {
+                $mail->addEmbeddedImage($logoPath, 'helix_logo');
+                $logoHtml = "<img src='cid:helix_logo' alt='HELIX' style='height: 60px; width: auto;'>";
+            } else {
+                $logoHtml = "<h2 style='color: #000; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin: 0;'>HELIX</h2>";
+            }
+
+            $row = $result->fetch_assoc();
+            $firstName = $row['Emp_firstName'] ?? 'User';
+
             $mail->isHTML(true);                                  
-            $mail->Subject = 'Password Reset Code';
-            $mail->Body    = "Your code is: <b>$code</b>";
+            $mail->Subject = 'Verify your helper account';
+            
+            // Stylized HTML Body
+            $mail->Body = "
+            <div style='font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; color: #1a1a1a;'>
+                <div style='text-align: center; margin-bottom: 40px;'>
+                    $logoHtml
+                </div>
+                
+                <h1 style='font-size: 32px; font-weight: 800; text-align: center; margin-bottom: 40px; color: #000;'>Your password reset code</h1>
+                
+                <div style='background-color: #f4f4f4; border-radius: 16px; padding: 40px; margin-bottom: 40px; text-align: center;'>
+                    <span style='font-size: 56px; font-weight: 800; letter-spacing: 4px; color: #000; font-family: monospace;'>$code</span>
+                </div>
+                
+                <div style='font-size: 16px; line-height: 1.6;'>
+                    <p style='margin-bottom: 20px; font-weight: 500;'>Hi $firstName,</p>
+                    <p style='margin-bottom: 20px; color: #444;'>
+                        You recently requested to reset the password for your HELIX HRMS account. In order to complete your login, please use the above code.
+                    </p>
+                    <p style='margin-top: 40px; font-size: 14px; color: #888;'>
+                        If you did not request this code, you can safely ignore this email. Someone else might have typed your email address by mistake.
+                    </p>
+                </div>
+                
+                <div style='margin-top: 60px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; font-size: 12px; color: #aaa;'>
+                    &copy; " . date('Y') . " HELIX HRMS. All rights reserved.
+                </div>
+            </div>
+            ";
+
+            // Plain text version for fallback
+            $mail->AltBody = "Hi $firstName,\n\nYour password reset code is: $code\n\nIf you did not request this, please ignore this email.";
 
             $mail->send();
             

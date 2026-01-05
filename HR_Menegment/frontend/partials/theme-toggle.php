@@ -8,6 +8,6 @@
  * All styles are in assets/css/dark-mode.css (no inline CSS).
  */
 ?>
-<button class="theme-toggle-btn fixed-bottom-right" type="button" aria-label="Toggle theme" onclick="toggleTheme()">
+<button class="theme-toggle-btn fixed-bottom-right" type="button" aria-label="Toggle theme">
     <span class="theme-icon">☀️</span>
 </button>

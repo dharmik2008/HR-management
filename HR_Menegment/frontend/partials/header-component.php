@@ -3,6 +3,19 @@
  * Consolidated Header Component
  * Usage: <?php include __DIR__ . '/partials/header-component.php'; ?>
  */
+
+// Safety initialization for unread count to prevent warnings on pages where it's not pre-defined
+if (!isset($unreadCount)) {
+    if (isset($db) && class_exists('Session') && Session::getUserId()) {
+        if (!class_exists('NotificationModel')) {
+            require_once __DIR__ . '/../../backend/models/NotificationModel.php';
+        }
+        $nm = new NotificationModel($db);
+        $unreadCount = $nm->getUnreadCount('employee', Session::getUserId());
+    } else {
+        $unreadCount = 0;
+    }
+}
 ?>
 <header class="d-flex flex-wrap align-items-center justify-content-between mb-4 position-relative">
     <div>
@@ -16,7 +29,6 @@
         <!-- Notification Bell with Dropdown -->
         <div class="dropdown" style="position: relative;">
             <button id="notifBell" class="btn btn-ghost d-flex align-items-center position-relative" 
-                    data-bs-toggle="dropdown" aria-expanded="false"
                     style="width:44px;height:44px;border-radius:10px;padding:0;border:none;"
                     title="Notifications" aria-label="Notifications">
                 <i class="bi-bell" style="font-size:1.2rem;color:#0d6efd;margin:auto;"></i>
@@ -31,62 +43,13 @@
                 <?php endif; ?>
             </button>
             
-            <!-- Notification Dropdown Menu -->
-            <ul class="dropdown-menu dropdown-menu-end p-0" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
-                <li class="dropdown-header bg-light py-2 px-3 border-bottom">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <strong>Notifications</strong>
-                        <?php if ($unreadCount > 0): ?>
-                            <form action="notifications.php" method="post" class="d-inline">
-                                <input type="hidden" name="action" value="mark_all_read">
-                                <button type="submit" class="btn btn-sm btn-link p-0">Mark all as read</button>
-                            </form>
-                        <?php endif; ?>
-                    </div>
-                </li>
-                <div id="notificationList">
-                    <?php 
-                    // Show a few recent notifications
-                    $recentNotifications = array_slice($allNotifications ?? [], 0, 5);
-                    if (!empty($recentNotifications)): 
-                        foreach ($recentNotifications as $notif): 
-                    ?>
-                        <li class="dropdown-item p-3 border-bottom <?php echo $notif['Status'] === 'Unread' ? 'unread' : ''; ?>" 
-                            style="white-space: normal;"
-                            onclick="window.location.href='notifications.php'">
-                            <div class="d-flex align-items-start">
-                                <div class="flex-shrink-0 me-2">
-                                    <i class="bi <?php echo getNotificationIcon($notif['Type']); ?> text-primary"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <div class="d-flex justify-content-between">
-                                        <h6 class="mb-1"><?php echo htmlspecialchars($notif['Title']); ?></h6>
-                                        <small class="text-muted"><?php echo timeAgo($notif['CreatedAt']); ?></small>
-                                    </div>
-                                    <p class="mb-0 small"><?php echo htmlspecialchars($notif['Message']); ?></p>
-                                </div>
-                            </div>
-                        </li>
-                    <?php 
-                        endforeach; 
-                    else: 
-                    ?>
-                        <li class="dropdown-item text-muted text-center py-3">No notifications</li>
-                    <?php endif; ?>
-                </div>
-                <li class="dropdown-divider m-0"></li>
-                <li class="text-center py-2">
-                    <a href="notifications.php" class="text-primary">View all notifications</a>
-                </li>
-            </ul>
         </div>
 
         <!-- Theme Toggle Button -->
-        <button id="themeToggle" class="btn btn-ghost d-flex align-items-center justify-content-center" 
+        <button id="themeToggle" class="theme-toggle-btn btn btn-ghost d-flex align-items-center justify-content-center" 
                 type="button" 
                 aria-label="Toggle theme" 
                 style="width:44px;height:44px;border-radius:10px;padding:0;border:none;"
-                onclick="toggleTheme()"
                 title="Toggle dark/light mode">
             <span id="themeIcon" style="font-size:1.2rem;">
                 <?php echo (isset($_COOKIE['darkMode']) && $_COOKIE['darkMode'] === 'true') ? '☀️' : '🌙'; ?>
@@ -150,38 +113,9 @@
     }
 </style>
 
-<script src="../assets/js/dark-mode.js"></script>
+<!-- Theme logic handled by global assets/js/dark-mode.js -->
 <script>
-// Theme Toggle Functionality
-function updateThemeIcon(isDark) {
-    const themeIcons = document.querySelectorAll('#themeIcon, .theme-icon');
-    themeIcons.forEach(icon => {
-        icon.textContent = isDark ? '☀️' : '🌙';
-        icon.closest('button')?.setAttribute('title', isDark ? 'Switch to light mode' : 'Switch to dark mode');
-    });
-    
-    // Set a cookie to remember the theme preference
-    document.cookie = `darkMode=${isDark}; path=/; max-age=31536000; samesite=lax`;
-}
-
-// Override the updateToggleIcon from dark-mode.js
-window.updateToggleIcon = updateThemeIcon;
-
-// Initialize theme icon on page load
-function initThemeIcon() {
-    const isDark = document.body.classList.contains('dark-mode');
-    updateThemeIcon(isDark);
-}
-
-// Call init when DOM is loaded
-document.addEventListener('DOMContentLoaded', initThemeIcon);
-
-// Initialize theme on page load
 document.addEventListener('DOMContentLoaded', function() {
-    // Check current theme and update icon
-    const isDark = document.body.classList.contains('dark-mode');
-    updateThemeIcon(isDark);
-    
     // Initialize Bootstrap tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -190,6 +124,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update notification badge on page load
     updateNotifBadge();
+
+    // Notification bell click handling
+    const notifBell = document.getElementById('notifBell');
+    if (notifBell) {
+        notifBell.addEventListener('click', function() {
+            window.location.href = 'notifications.php';
+        });
+    }
 });
 
 // Notification polling and handling
@@ -214,15 +156,4 @@ function updateNotifBadge() {
 // Update notification badge every 30 seconds
 setInterval(updateNotifBadge, 30000);
 
-// Initialize tooltips
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Bootstrap tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-    
-    // Update notification badge on page load
-    updateNotifBadge();
-});
 </script>

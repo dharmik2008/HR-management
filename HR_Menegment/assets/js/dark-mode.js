@@ -7,17 +7,25 @@
 (function () {
     'use strict';
 
+    // Prevent double initialization
+    if (window.__HRMS_DARK_MODE_INIT__) {
+        console.log('Dark mode already initialized, skipping...');
+        return;
+    }
+    window.__HRMS_DARK_MODE_INIT__ = true;
+
+    // Theme storage key
+    const THEME_STORAGE_KEY = 'hrms_theme';
+
     // Check if dark mode is enabled in localStorage
-    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    const isDarkMode = savedTheme === 'dark';
 
     // Apply dark mode class to body if needed
     if (isDarkMode) {
         document.documentElement.classList.add('dark-mode');
         document.body.classList.add('dark-mode');
     }
-
-    // Theme storage key
-    const THEME_STORAGE_KEY = 'hrms_theme';
 
     // Theme values
     const THEME_LIGHT = 'light';
@@ -44,6 +52,8 @@
         document.documentElement.classList.add('dark-mode');
         document.body.classList.add('dark-mode');
         localStorage.setItem(THEME_STORAGE_KEY, THEME_DARK);
+        // Also set a cookie to remember the theme preference
+        document.cookie = `darkMode=true; path=/; max-age=31536000; samesite=lax`;
     }
 
     /**
@@ -53,6 +63,8 @@
         document.documentElement.classList.remove('dark-mode');
         document.body.classList.remove('dark-mode');
         localStorage.setItem(THEME_STORAGE_KEY, THEME_LIGHT);
+        // Also set a cookie to remember the theme preference
+        document.cookie = `darkMode=false; path=/; max-age=31536000; samesite=lax`;
     }
 
     /**
@@ -92,7 +104,7 @@
      * Update all theme toggle icons
      */
     function updateThemeIcons(isDark) {
-        const themeIcons = document.querySelectorAll('#themeIcon, .theme-toggle-icon');
+        const themeIcons = document.querySelectorAll('#themeIcon, .theme-icon, .theme-toggle-icon');
         themeIcons.forEach(icon => {
             icon.textContent = isDark ? '☀️' : '🌙';
             icon.setAttribute('title', isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode');
@@ -122,19 +134,24 @@
     document.addEventListener('click', function (event) {
         const toggleBtn = event.target.closest('.theme-toggle-btn');
         if (toggleBtn) {
-            console.log('Theme toggle clicked');
+            console.log('Theme toggle button clicked:', toggleBtn.id || 'anonymous');
+            event.preventDefault(); // Prevent jump if it's a link
             toggleTheme();
         }
     });
 
-    // Initialize theme when DOM is ready
-    document.addEventListener('DOMContentLoaded', function () {
+    // Initialize theme when DOM is ready or immediately if already ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () {
+            initTheme();
+            const isDark = document.body.classList.contains('dark-mode');
+            updateThemeIcons(isDark);
+        });
+    } else {
         initTheme();
-
-        // Update all theme toggle icons based on current theme
         const isDark = document.body.classList.contains('dark-mode');
         updateThemeIcons(isDark);
-    });
+    }
 
     // Update icons on theme change (for browser sync or other theme changes)
     const observer = new MutationObserver((mutations) => {
