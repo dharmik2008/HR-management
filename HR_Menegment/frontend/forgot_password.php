@@ -133,6 +133,9 @@ if (isset($_POST['send_code'])) {
             width: 100%;
             max-width: 400px;
             text-align: center;
+            height: auto;
+            align-self: center;
+            justify-self: center;
         }
 
         .logo-area { margin-bottom: 20px; }
@@ -181,7 +184,8 @@ if (isset($_POST['send_code'])) {
 
     <div class="container">
         <div class="logo-area">
-            <h2>HELIX</h2> 
+            <img src="../assets/HELIX.png" alt="HELIX" style="height: 60px; width: auto;">
+            <h2>HELIX</h2>
             <p>Reset your password</p>
         </div>
 

@@ -196,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input class="form-check-input" type="checkbox" id="remember" name="remember">
         <label class="form-check-label" for="remember">Remember me</label>
     </div>
-    <a href="forgot_password.php" class="link-muted small">Forgot password?</a>
+    <a href="forgot_password.php" class="link-muted small" id="forgotPasswordLink">Forgot password?</a>
 </div>
 
                     <div class="d-grid">
@@ -221,6 +221,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             tab.classList.add('active');
             const target = tab.dataset.target;
             userTypeInput.value = target;
+
+            // Show/Hide forgot password link
+            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+            if (target === 'hr') {
+                forgotPasswordLink.style.display = 'none';
+            } else {
+                forgotPasswordLink.style.display = 'block';
+            }
         });
     });
 

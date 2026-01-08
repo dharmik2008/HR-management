@@ -157,7 +157,7 @@ $categories = $categoryModel->getAllCategories();
                     <!-- Basic Info -->
                     <div class="text-center text-md-start flex-grow-1">
                         <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-1">
-                            <h2 class="mb-0 fw-bold text-dark"><?php echo htmlspecialchars($empData['Emp_firstName'] . ' ' . $empData['Emp_lastName']); ?></h2>
+                            <h2 class="mb-0 fw-bold"><?php echo htmlspecialchars($empData['Emp_firstName'] . ' ' . $empData['Emp_lastName']); ?></h2>
                             <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">
                                 <?php echo htmlspecialchars($empData['Category_name'] ?? 'Employee'); ?>
                             </span>
@@ -171,15 +171,15 @@ $categories = $categoryModel->getAllCategories();
                         <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-3">
                             <div class="bg-white p-3 rounded-3 shadow-sm border border-light" style="min-width: 140px;">
                                 <small class="text-muted d-block text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Monthly Salary</small>
-                                <div class="fw-bold text-dark h5 mb-0 mt-1">₹<?php echo number_format($empData['Salary'] ?? 0); ?></div>
+                                <h5 class="fw-bold mb-0 mt-1">₹<?php echo number_format($empData['Salary'] ?? 0); ?></h5>
                             </div>
                             <div class="bg-white p-3 rounded-3 shadow-sm border border-light" style="min-width: 140px;">
                                 <small class="text-muted d-block text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Joining Date</small>
-                                <div class="fw-bold text-dark h5 mb-0 mt-1"><?php echo date('M Y', strtotime($empData['Joining_date'])); ?></div>
+                                <h5 class="fw-bold mb-0 mt-1"><?php echo date('M Y', strtotime($empData['Joining_date'])); ?></h5>
                             </div>
                             <div class="bg-white p-3 rounded-3 shadow-sm border border-light" style="min-width: 140px;">
                                 <small class="text-muted d-block text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Status</small>
-                                <div class="fw-bold text-success h5 mb-0 mt-1"><?php echo htmlspecialchars($empData['Status']); ?></div>
+                                <h5 class="fw-bold text-success mb-0 mt-1"><?php echo htmlspecialchars($empData['Status']); ?></h5>
                             </div>
                         </div>
                     </div>

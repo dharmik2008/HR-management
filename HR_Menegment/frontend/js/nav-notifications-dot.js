@@ -53,16 +53,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        const bell = document.getElementById('notifBell');
-        if (bell) {
-            bell.addEventListener('click', async function (e) {
-                e.preventDefault();
-                await markNotificationsRead();
-                const target = bell.getAttribute('href') || 'notifications.php';
-                window.location.href = target;
-            });
-        }
-
         updateNotifBadge();
         setInterval(updateNotifBadge, 15000);
     });
