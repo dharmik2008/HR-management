@@ -170,11 +170,11 @@ $leaveCounts = [
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Start Date</label>
-                        <input type="date" name="start_date" class="form-control" required>
+                        <input type="date" name="start_date" id="start_date" class="form-control" min="<?php echo date('Y-m-d'); ?>" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">End Date</label>
-                        <input type="date" name="end_date" class="form-control" required>
+                        <input type="date" name="end_date" id="end_date" class="form-control" min="<?php echo date('Y-m-d'); ?>" required>
                     </div>
                     <div class="col-md-3 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100">Submit Request</button>
@@ -268,5 +268,19 @@ $leaveCounts = [
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/dark-mode.js"></script>
+<script>
+    // Prevent selecting previous dates and ensure end date is after start date
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+
+    startDateInput.addEventListener('change', function() {
+        if (this.value) {
+            endDateInput.min = this.value;
+            if (endDateInput.value && endDateInput.value < this.value) {
+                endDateInput.value = this.value;
+            }
+        }
+    });
+</script>
 </body>
 </html>
